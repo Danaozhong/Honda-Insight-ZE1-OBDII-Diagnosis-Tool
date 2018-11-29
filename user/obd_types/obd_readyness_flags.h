@@ -1,0 +1,8 @@
+//
+// Created by Clemens on 12.12.2017.
+//
+
+#ifndef ANDROID_OBD_READYNESS_FLAGS_H
+#define ANDROID_OBD_READYNESS_FLAGS_H
+
+#endif //ANDROID_OBD_READYNESS_FLAGS_H
