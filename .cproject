@@ -35,6 +35,10 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Espressif\ESP32_RTOS_SDK\include\esp32\&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Espressif\ESP32_RTOS_SDK\extra_include\&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Espressif\ESP32_RTOS_SDK\third_party\include\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\esp32&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\freertos&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.501261625" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -44,6 +48,10 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Espressif\ESP32_RTOS_SDK\include\esp32\&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Espressif\ESP32_RTOS_SDK\extra_include\&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Espressif\ESP32_RTOS_SDK\third_party\include\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\esp32&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\freertos&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1700912488" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>

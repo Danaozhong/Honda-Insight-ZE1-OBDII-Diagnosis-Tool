@@ -11,10 +11,10 @@
 #include "app/ble_communication/obd_ble_interface.h"
 
 #include "../../midware/threads/cyclic_thread.hpp"
-#include "../diagnosis_reader.hpp"
+#include "../communication_manager.hpp"
 
 
-GenericOBDDataServer::GenericOBDDataServer(std::shared_ptr<Application::DiagnosisReader> diagnosis_reader)
+GenericOBDDataServer::GenericOBDDataServer(std::shared_ptr<Application::CommunicationManager> diagnosis_reader)
 	: diagnosis_reader(diagnosis_reader), server_connection_state(CONNECTION_STATE_DISCONNECTED)
 {}
 
@@ -39,7 +39,7 @@ int GenericOBDDataServer::get_obd_data_hash(char* buffer, size_t buffer_size) co
 	return 0;
 }
 
-std::shared_ptr<Application::DiagnosisReader> GenericOBDDataServer::get_diagnosis_reader()
+std::shared_ptr<Application::CommunicationManager> GenericOBDDataServer::get_diagnosis_reader()
 {
 	return this->diagnosis_reader;
 }
@@ -125,7 +125,7 @@ void OBDDataBLETransmissionThread::run()
 			tx_message[5] = reinterpret_cast<unsigned char*>(&u16_total_size)[1];
 
 			/* Send the message to the client */
-			DEBUG_PRINTF("OBD Packet sent, size: " + helper::to_string(u16_total_size));
+			DEBUG_PRINTF("OBD Packet sent, size: " + std_ex::to_string(u16_total_size));
 			this->ble_obd_server->ble_interface.send_interface(BLE_CHARACTERISTIC_ID_SEND_OBD_DATA, tx_message);
 		}
 		else
@@ -140,7 +140,7 @@ void OBDDataBLETransmissionThread::run()
 }
 
 
-BLEOBDDataServer::BLEOBDDataServer(std::shared_ptr<Application::DiagnosisReader> diagnosis_reader)
+BLEOBDDataServer::BLEOBDDataServer(std::shared_ptr<Application::CommunicationManager> diagnosis_reader)
 : GenericOBDDataServer(diagnosis_reader), server_is_running(false), data_received_complete(false),
   received_data_characteristic_id(0u), thread_ble_obd_server_thread(NULL),
   thread_obd_data_transmission(NULL), thread_obd_error_codes_transmission(NULL),
@@ -377,7 +377,7 @@ void BLEOBDDataServer::server_process_received_command(const BLETransmitBuffer &
 
 	if (i32_ret_val == -1)
 	{
-		DEBUG_PRINTF("Received unknown command: " + helper::to_string(static_cast<int>(command[0])));
+		DEBUG_PRINTF("Received unknown command: " + std_ex::to_string(static_cast<int>(command[0])));
 	}
 }
 
@@ -435,7 +435,7 @@ int BLEOBDDataServer::server_receive_any_command(int characteristic_id, std::vec
 	const auto ts_begin = std::chrono::system_clock::now();
 	while(data_received_complete == false)
 	{
-		TaskHelper::sleep_for(std::chrono::milliseconds(50));
+		std_ex::sleep_for(std::chrono::milliseconds(50));
 		auto ts_now = std::chrono::system_clock::now();
 		if (ts_now - ts_begin > timeout)
 		{
@@ -511,11 +511,11 @@ void OBDServerThread::run()
 		while(ble_obd_server.ble_interface.is_connected() == false)
 		{
 			/* Todo replace by something like an event handler */
-			TaskHelper::sleep_for(std::chrono::seconds(2));
+			std_ex::sleep_for(std::chrono::seconds(2));
 			DEBUG_PRINTF("Waiting for BLE client to connect...");
 		}
 
-		TaskHelper::sleep_for(std::chrono::seconds(1));
+		std_ex::sleep_for(std::chrono::seconds(1));
 		DEBUG_PRINTF("BLE client connected, initializing connection...");
 		if(0 != ble_obd_server.initialize_client_connection())
 		{

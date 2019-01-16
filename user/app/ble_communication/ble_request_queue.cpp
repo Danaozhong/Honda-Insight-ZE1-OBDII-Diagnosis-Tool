@@ -76,7 +76,7 @@ int BLESendRequestQueue::send_command_and_wait_for_reply(const BLETransmitBuffer
 			/* Reply has been received in time! */
 			return 0;
 		}
-		TaskHelper::sleep_for(std::chrono::milliseconds(20));
+		std_ex::sleep_for(std::chrono::milliseconds(20));
 		current_time = std::chrono::system_clock::now();
 	}
 

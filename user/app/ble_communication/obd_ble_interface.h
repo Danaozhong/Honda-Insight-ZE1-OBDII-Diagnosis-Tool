@@ -44,14 +44,14 @@ public:
 #include <memory>
 namespace Application
 {
-class DiagnosisReader;
+class CommunicationManager;
 }
 
 
 class GenericOBDDataServer
 {
 public:
-	GenericOBDDataServer(std::shared_ptr<Application::DiagnosisReader> diagnosis_reader);
+	GenericOBDDataServer(std::shared_ptr<Application::CommunicationManager> diagnosis_reader);
 
 	virtual ~GenericOBDDataServer();
 
@@ -71,7 +71,7 @@ public:
 	virtual void set_transmission_request(OBDDataRequestType type) = 0;
 	virtual void clear_transmission_request(OBDDataRequestType type) = 0;
 
-	std::shared_ptr<Application::DiagnosisReader> get_diagnosis_reader();
+	std::shared_ptr<Application::CommunicationManager> get_diagnosis_reader();
 	/*
 	 * Init
 	 * Version Number
@@ -83,7 +83,7 @@ public:
 	OBDConnectionState server_connection_state;
 protected:
 	/* Reference to the diagnosis reader used for interfacing the OBD diagnosis tool */
-	std::shared_ptr<Application::DiagnosisReader> diagnosis_reader;
+	std::shared_ptr<Application::CommunicationManager> diagnosis_reader;
 
 	/* Prevent this class from being copied to prevent slicing */
 	GenericOBDDataServer(const GenericOBDDataServer&);
@@ -122,7 +122,7 @@ class BLEOBDDataServer : public GenericOBDDataServer, public BLESendRequestQueue
 public:
 	friend OBDServerThread;
 
-	BLEOBDDataServer(std::shared_ptr<Application::DiagnosisReader> diagnosis_reader);
+	BLEOBDDataServer(std::shared_ptr<Application::CommunicationManager> diagnosis_reader);
 
 	virtual void startup();
 	virtual void shutdown();

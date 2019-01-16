@@ -4,10 +4,14 @@
 
 #include <stdlib.h>     /* srand, rand */
 #include <memory>
+#include <chrono>
+#include <thread>
+#include <string>
 
 /* Own header files */
 #include "app/shared/obd_parameters.hpp"
 #include "midware/trace/trace.h"
+#include "midware/threads/cyclic_thread.hpp"
 
 DiagnosisDeviceInterface::~DiagnosisDeviceInterface()
 {
@@ -15,13 +19,24 @@ DiagnosisDeviceInterface::~DiagnosisDeviceInterface()
 }
 
 DummyDiagnosisDevice::DummyDiagnosisDevice()
+	: connected(false)
 {
 	OBDataListHelper::clone(obd_ii_diagnosis_data, this->dummy_obd_data);
+
+	//ThreadingHelper::set_default_stack_size(0x4000u);
+
+	this->thread_diagnosis_reader = new std_ex::thread(&DummyDiagnosisDevice::thread_diagnosis_reader_main, this);
 }
 
 DummyDiagnosisDevice::~DummyDiagnosisDevice()
 {
+	if (nullptr != this->thread_diagnosis_reader)
+	{
+		this->thread_diagnosis_reader->join();
+		delete(this->thread_diagnosis_reader);
+	}
 }
+
 
 int DummyDiagnosisDevice::connect()
 {
@@ -67,8 +82,28 @@ DiagnosisDeviceConnectionState DummyDiagnosisDevice::get_communication_state() c
 	return DiagnosisDeviceConnectionState::DIAGNOSIS_DEVICE_DISCONNECTED;
 }
 
+const OBDDataList& DummyDiagnosisDevice::get_obd_data() const
+{
+	return this->dummy_obd_data;
+}
+
+std::vector<OBDErrorCode> DummyDiagnosisDevice::get_error_codes() const
+{
+	return this->error_codes;
+}
+
+int DummyDiagnosisDevice::clear_error_code(const OBDErrorCode& code)
+{
+	return 0;
+}
+
+
 void DummyDiagnosisDevice::update_data()
 {
+	std::vector<OBDDataList::const_iterator> a_changed_obd_data;
+
+	// TODO thread protection
+
 	/* Pretend to read some data */
 	for (auto itr = this->dummy_obd_data.begin(); itr != this->dummy_obd_data.end(); ++itr)
 	{
@@ -94,8 +129,17 @@ void DummyDiagnosisDevice::update_data()
 		itr->value_f = std::min(itr->value_f, itr->max);
 		itr->value_f = std::max(itr->value_f, itr->min);
 
+		a_changed_obd_data.push_back(itr);
 	}
 
+	if (a_changed_obd_data.size() != 0)
+	{
+		// OBD values have changed, send signal to application!
+		this->sig_obd_data_received(a_changed_obd_data);
+
+	}
+
+	// TODO Send a signal here as fell for the OBD error codes.
 	if (rand() % 100 != 0)
 	{
 		// Add an error code;
@@ -104,26 +148,16 @@ void DummyDiagnosisDevice::update_data()
 	}
 }
 
-int DummyDiagnosisDevice::get_obd_data(OBDDataList &data_array)
-{
-	int index = 0;
-	data_array.clear();
 
-	for (auto itr = dummy_obd_data.begin(); itr != dummy_obd_data.end(); ++itr)
+void DummyDiagnosisDevice::thread_diagnosis_reader_main()
+{
+	/* This thread does the reading of the OBD data */
+	while(true)
 	{
-		data_array.push_back(*itr);
-		//*itr = this->dummy_obd_data[index];
-		//++index;
+		//uint32_t uxHighWaterMark = uxTaskGetStackHighWaterMark( NULL );
+		//DEBUG_PRINTF("Current stack is: " + helper::to_string(uxHighWaterMark) + " bytes.");
+
+		this->update_data();
+		std_ex::sleep_for(std::chrono::milliseconds(100));
 	}
-	return 0;
-}
-
-std::vector<OBDErrorCode> DummyDiagnosisDevice::get_error_codes()
-{
-	return this->error_codes;
-}
-
-int DummyDiagnosisDevice::clear_error_code(const OBDErrorCode& code)
-{
-	return 0;
 }

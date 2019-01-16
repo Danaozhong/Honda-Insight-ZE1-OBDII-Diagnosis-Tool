@@ -5,6 +5,7 @@
 /* System header files */
 #include <memory>
 #include <vector>
+#include "thread.hpp"
 
 /* Own header */
 #include "diagnosis_device_interface.hpp"
@@ -22,6 +23,9 @@ public:
 	DummyDiagnosisDevice();
 	virtual ~DummyDiagnosisDevice();
 
+	//virtual void start_acquisition();
+	//virtual void stop_data_acquisition();
+
 	virtual int connect();
 	virtual int disconnect();
 
@@ -32,10 +36,9 @@ public:
 
 	virtual DiagnosisDeviceConnectionState get_communication_state() const;
 
-	virtual void update_data();
+	virtual const OBDDataList& get_obd_data() const;
 
-	virtual int get_obd_data(OBDDataList &data_array);
-	virtual std::vector<OBDErrorCode> get_error_codes();
+	virtual std::vector<OBDErrorCode> get_error_codes() const;
 
 	virtual int clear_error_code(const OBDErrorCode& code);
 
@@ -48,6 +51,12 @@ private:
 
 	/** the current read OBD II data */
 	OBDDataList dummy_obd_data;
+
+	std_ex::thread* thread_diagnosis_reader;
+
+	void update_data();
+
+	void thread_diagnosis_reader_main();
 };
 
 #endif /* _OBD_II_CNC_DUMMY_DIAGNOSIS_DEVICE_HPP_ */

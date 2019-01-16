@@ -6,7 +6,7 @@
 
 
 
-OBD_MeasureCyclicThread_1000ms::OBD_MeasureCyclicThread_1000ms(Application::DiagnosisReader &diagnosis_reader)
+OBD_MeasureCyclicThread_1000ms::OBD_MeasureCyclicThread_1000ms(Application::CommunicationManager &diagnosis_reader)
 	: CyclicThread("OBDataAcquisition1000msCyclic", std::chrono::milliseconds(1000)), ref_diagnosis_reader(diagnosis_reader)
 {
 }

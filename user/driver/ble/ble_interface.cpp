@@ -60,7 +60,7 @@ void MyCallbacks::onWrite(BLECharacteristic *pCharacteristic)
 		for (int i = 0; i < rx_buffer.size(); i++)
 		{
 
-			value += " " + helper::to_string(static_cast<int>(rx_buffer[i]));
+			value += " " + std_ex::to_string(static_cast<int>(rx_buffer[i]));
 
 		}
 		print_serial(value.c_str());
@@ -93,7 +93,7 @@ void MyCallbacks::onWrite(BLECharacteristic *pCharacteristic)
 		if (rx_buffer[0] == BLE_PACKET_END)
 		{
 			/* Message has been received completely! */
-			DEBUG_PRINTF("Message received of length " + helper::to_string(this->current_message.size()));
+			DEBUG_PRINTF("Message received of length " + std_ex::to_string(this->current_message.size()));
 
 			/* Signalize application */
 			this->SIG_RECEIVED_DATA(this->current_message);

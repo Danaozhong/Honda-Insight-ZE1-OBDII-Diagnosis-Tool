@@ -6,9 +6,82 @@
  */
 #include "thread.hpp"
 #include "trace.h"
-
-
+#include <pthread.h>
 #include "Arduino.h" /* For delay() */
+
+
+int ThreadingHelper::set_priority(std::thread &thread, int priority)
+{
+#if 0 /* TODO include correct header */
+    sched_param sch = {0};
+    int policy;
+    pthread_getschedparam(thread.native_handle(), &policy, &sch);
+    sch.sched_priority = priority;
+    return pthread_setschedparam(thread.native_handle(), SCHED_FIFO, &sch);
+#endif
+    return 0;
+}
+
+int ThreadingHelper::set_stack_size(std::thread &thread, size_t stack_size)
+{
+#if 0
+	//pthread_t threadID = static_cast<pthread_t>(thread.native_handle());
+	pthread_attr_t thread_attr = { 0 };
+
+	pthread_getattr_np(thread.native_handle(), &thread_attr);
+
+	if (0 != pthread_attr_init(&thread_attr))
+	{
+		DEBUG_PRINTF("Attr init failed!");
+	}
+	if (0 != pthread_attr_setstacksize(&thread_attr, stack_size))
+	{
+		DEBUG_PRINTF("Set stack size failed!!");
+	}
+#endif
+	return 0;
+}
+
+
+
+
+
+namespace std_ex
+{
+	thread::~thread()
+	{
+	}
+
+	void thread::join()
+	{
+	}
+
+    thread::_State::~_State() {}
+
+    void thread::_M_start_thread(_State_ptr ptr)
+    {
+    	static int i = 0;
+
+    	m_task_name = "TASK" + std_ex::to_string(i++);
+    	m_u_task_priority = 1u;
+    	m_u_stack_size = 0x2000u;
+    	void (*fp)(void*) = [](void* o){ static_cast<_State*>(o)->_M_run(); };
+
+    	  xTaskCreate(
+    		  fp,                       /* Task function. */
+			  m_task_name.c_str(),   	/* name of task. */
+			  m_u_stack_size,           /* Stack size of task */
+    	      ptr.get(),                /* parameter of the task */
+			  m_u_task_priority,        /* priority of the task */
+    	      &m_task_handle);          /* Task handle to keep track of created task */
+    }
+}
+
+
+
+
+
+
 
 
 Thread::Thread(const std::string &name)

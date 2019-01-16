@@ -28,7 +28,7 @@ enum exception_type
 
 };
 
-namespace helper
+namespace std_ex
 {
     template < typename T > std::string to_string( const T& n )
     {

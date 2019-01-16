@@ -21,7 +21,7 @@ namespace Application
 			FATAL("Creation of the OBD Diagnosis device failed!");
 		}
 
-		this->diagnosis_reader = std::shared_ptr<DiagnosisReader>(new DiagnosisReader(obd_diagnosis_device, obd_ii_diagnosis_data));
+		this->diagnosis_reader = std::shared_ptr<CommunicationManager>(new CommunicationManager(obd_diagnosis_device, obd_ii_diagnosis_data));
 
 		if(nullptr == this->diagnosis_reader)
 		{
@@ -40,10 +40,10 @@ namespace Application
 
 
 		DEBUG_PRINTF("Creating OBD Data Acquisition Threads!");
-		std::shared_ptr<Thread> thread_cyclic_100ms = std::shared_ptr<OBD_MeasureCyclicThread_100ms>(new OBD_MeasureCyclicThread_100ms(*this->diagnosis_reader));
+		//std::shared_ptr<Thread> thread_cyclic_100ms = std::shared_ptr<OBD_MeasureCyclicThread_100ms>(new OBD_MeasureCyclicThread_100ms(*this->diagnosis_reader));
 		std::shared_ptr<Thread> thread_cyclic_1000ms = std::shared_ptr<OBD_MeasureCyclicThread_1000ms>(new OBD_MeasureCyclicThread_1000ms(*this->diagnosis_reader));
 
-		thread_repository.add_thread(thread_cyclic_100ms);
+		//thread_repository.add_thread(thread_cyclic_100ms);
 		thread_repository.add_thread(thread_cyclic_1000ms);
 
 		thread_repository.start_all_threads();

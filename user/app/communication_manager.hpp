@@ -1,4 +1,3 @@
-
 #ifndef _APP_DIAGNOSIS_READER_HPP_
 #define _APP_DIAGNOSIS_READER_HPP_
 
@@ -35,12 +34,13 @@ namespace Application
 	 *
 	 * TODO Clemens This class is super ugly and not easy to understand, refactor at some point
 	 */
-	class DiagnosisReader
+	class CommunicationManager
 	{
 	public:
 		static const int MINIMUM_PROTOCOL_VERSION = 1;
 
-		DiagnosisReader(std::shared_ptr<DiagnosisDeviceInterface> diagnosis_device, const OBDDataList &obd_data);
+		CommunicationManager(std::shared_ptr<DiagnosisDeviceInterface> diagnosis_device, const OBDDataList &obd_data);
+		~CommunicationManager();
 
 
 		int connect();
@@ -48,10 +48,12 @@ namespace Application
 
 		void reset();
 
-		void cycle_read_obd_data();
+		//void cycle_read_obd_data();
 		void cycle_read_error_codes();
 
 		void set_elements_of_interests(const std::vector<unsigned char> &identifier_list);
+
+		void sig_obd_data_changed_handler(std::vector<OBDDataList::const_iterator> changed_items);
 
 		std::vector<OBDDataList::const_iterator> get_changed_obd_data_of_interest() const;
 
@@ -69,8 +71,11 @@ namespace Application
 
 		mutable std::mutex obd_data_list_mutex;
 		/* Maintain to lists of OBD data, to calculate exactly what has changed (save bandwith)*/
-		OBDDataList obd_data_list_current;
-		OBDDataList obd_data_list_prev;
+		//OBDDataList obd_data_list_current;
+		//OBDDataList obd_data_list_prev;
+
+		std::vector<OBDDataList::const_iterator> ait_changed_obd_data;
+
 		std::vector<OBDErrorCode> error_codes;
 		std::vector<unsigned char> au8_elements_of_interest;
 	};

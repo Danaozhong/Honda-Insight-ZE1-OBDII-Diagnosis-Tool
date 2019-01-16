@@ -9,15 +9,15 @@
 #define USER_APP_THREADS_DATA_ACQUISITION_THREADS_OBD_MEASURE_CYCLIC_THREAD_1000MS_HPP_
 
 #include "../../../midware/threads/cyclic_thread.hpp"
-#include "app/diagnosis_reader.hpp"
+#include "../../communication_manager.hpp"
 
 class OBD_MeasureCyclicThread_1000ms : public CyclicThread
 {
 public:
-	OBD_MeasureCyclicThread_1000ms(Application::DiagnosisReader &diagnosis_reader);
+	OBD_MeasureCyclicThread_1000ms(Application::CommunicationManager &diagnosis_reader);
 	virtual void run();
 protected:
-	Application::DiagnosisReader &ref_diagnosis_reader;
+	Application::CommunicationManager &ref_diagnosis_reader;
 };
 
 

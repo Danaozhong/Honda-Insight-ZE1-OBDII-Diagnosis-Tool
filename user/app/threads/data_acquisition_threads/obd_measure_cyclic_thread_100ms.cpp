@@ -4,12 +4,12 @@
 
 
 
-OBD_MeasureCyclicThread_100ms::OBD_MeasureCyclicThread_100ms(Application::DiagnosisReader &diagnosis_reader)
+OBD_MeasureCyclicThread_100ms::OBD_MeasureCyclicThread_100ms(Application::CommunicationManager &diagnosis_reader)
 	: CyclicThread("OBDataAcquisition100msCyclic", std::chrono::milliseconds(50)), ref_diagnosis_reader(diagnosis_reader)
 {
 }
 
 void OBD_MeasureCyclicThread_100ms::run(void)
 {
-	ref_diagnosis_reader.cycle_read_obd_data();
+	//ref_diagnosis_reader.cycle_read_obd_data();
 }

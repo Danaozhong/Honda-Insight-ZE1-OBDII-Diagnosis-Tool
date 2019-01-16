@@ -1,10 +1,11 @@
 #ifndef _EVENT_HANDLER_H_
 #define _EVENT_HANDLER_H_
 
-// tried imitating boost::signals2, couldn't do it.
+// tried imitating boost::signals2
 #include <functional>
 #include <vector>
 #include <memory>
+#include <mutex>
 
 #include "midware/trace/trace.h"
 namespace boost
@@ -18,6 +19,11 @@ namespace boost
             typedef std::function< void( T ) > signal_handler_function;
 
             std::shared_ptr<std::vector<signal_handler_function>> signal_handlers;
+
+            mutable std::mutex signal_handler_mutex;
+
+
+
             //std::vector<U*> signal_handlers;
         public:
             //void connect(void (*handler)(T))
@@ -27,17 +33,18 @@ namespace boost
 
             void connect(const signal_handler_function &handler)
             {
-                DEBUG_PRINTF("connect called! size " + helper::to_string(signal_handlers->size()));
+            	std::lock_guard<std::mutex> lock(this->signal_handler_mutex);
+                DEBUG_PRINTF("connect called! size " + std_ex::to_string(signal_handlers->size()));
                 signal_handlers->push_back(handler);
             }
 
             void operator()(const T &arg) const
             {
-
-                DEBUG_PRINTF("Operator() called! size " + helper::to_string(signal_handlers->size()));
+            	std::lock_guard<std::mutex> lock(this->signal_handler_mutex);
+                //DEBUG_PRINTF("Operator() called! size " + helper::to_string(signal_handlers->size()));
                 for (auto itr = signal_handlers->begin(); itr != signal_handlers->end(); ++itr)
                 {
-                    DEBUG_PRINTF("Calling a function!");
+                    //DEBUG_PRINTF("Calling a function!");
                     (*itr)(arg);
                 }
             }

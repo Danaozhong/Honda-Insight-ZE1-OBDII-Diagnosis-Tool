@@ -2,7 +2,7 @@
 #define _DIAGNOSIS_READER_APPLICATION_HPP_
 
 /* Own header files */
-#include "app/diagnosis_reader.hpp"
+#include "communication_manager.hpp"
 #include "thread_repository.hpp"
 
 namespace Application
@@ -24,7 +24,7 @@ namespace Application
 		std::shared_ptr<DiagnosisDeviceInterface> obd_diagnosis_device;
 
 	    /** Helper object to filter / manage the OBD II data read */
-		std::shared_ptr<DiagnosisReader> diagnosis_reader;
+		std::shared_ptr<CommunicationManager> diagnosis_reader;
 
 		/** The BLE interface */
 		std::shared_ptr<BLEOBDDataServer> ble_server;

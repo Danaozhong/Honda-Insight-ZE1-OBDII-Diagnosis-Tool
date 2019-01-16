@@ -15,7 +15,7 @@
 /* Own header files */
 #include "cyclic_thread.hpp"
 
-namespace TaskHelper
+namespace std_ex
 {
 	void sleep_for(std::chrono::milliseconds milliseconds)
 	{
@@ -62,7 +62,7 @@ void CyclicThread::main()
 		this->run();
 
 		/* and suspend the task again. */
-		TaskHelper::sleep_for(std::chrono::milliseconds(this->interval));
+		std_ex::sleep_for(std::chrono::milliseconds(this->interval));
 	}
 
 	this->shutdown();
