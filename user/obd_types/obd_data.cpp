@@ -131,6 +131,19 @@ void OBDataListHelper::clone(const OBDDataList &src, OBDDataList &dst)
 	dst = src;
 }
 
+OBDDataList::iterator OBDataListHelper::get_element_by_identifier(OBDDataList &list, uint8_t identifier)
+{
+	// TODO just use std::find lah
+	for (auto itr_obd_value = list.begin(); itr_obd_value != list.end(); ++itr_obd_value)
+	{
+		if (itr_obd_value->identifier == identifier)
+		{
+			return itr_obd_value;
+		}
+	}
+	return list.end();
+}
+
 bool operator==(const OBDValue &v1, const OBDValue &v2)
 {
 	if (v1.type != v2.type)

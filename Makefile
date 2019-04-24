@@ -199,6 +199,9 @@ USER_INC += G:/Programme/Libraries/Boost/v1.66.0/
 
 # Patch own include directory
 USER_INC += ./user/
+
+# Add Wire library
+USER_SRC += C:/Users/Clemens/Documents/Arduino/hardware/espressif/esp32/libraries/Wire/src
 #end Patch Clenens
 
 

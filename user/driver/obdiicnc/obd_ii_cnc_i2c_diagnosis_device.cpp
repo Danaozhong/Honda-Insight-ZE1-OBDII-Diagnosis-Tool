@@ -18,14 +18,55 @@
 #define __OBD_II_I2C_BUFFER_SIZE (100)
 
 
-OBDIICnCI2CDiagnosisDevice::OBDIICnCI2CDiagnosisDevice()
-	: connected(false), m_o_i2c_interface(I2C_FIRST, MODE_SLAVE, 0xE)
-{
-	OBDataListHelper::clone(obd_ii_diagnosis_data, this->dummy_obd_data);
+namespace {
+OBDIICnCI2CDiagnosisDevice* p_o_instance = nullptr;
+}
 
+void on_i2c_receive(int num_of_bytes_received)
+{
+	uint8_t au8_buffer[100] = {0 };
+
+	uint32_t u32_num_of_bytes_received = 0;
+
+	while (1 < Wire.available())
+	{ // loop through all but the last
+		if (u32_num_of_bytes_received < 100)
+		{
+			au8_buffer[u32_num_of_bytes_received] = Wire.read();
+		}
+
+		u32_num_of_bytes_received++;
+		//char c = Wire.read(); // receive byte as a character
+		//Serial.print(c);         // print the character
+	}
+	//int x = Wire.read();    // receive byte as an integer
+	//Serial.println(x);         // print the integer
+
+	DEBUG_PRINTF("Data received!" + std::string(reinterpret_cast<char*>(au8_buffer)));
+
+	if (u32_num_of_bytes_received > 0 && p_o_instance != nullptr)
+	{
+		p_o_instance->process_message(au8_buffer, u32_num_of_bytes_received);
+	}
+}
+
+OBDIICnCI2CDiagnosisDevice::OBDIICnCI2CDiagnosisDevice()
+	: connected(false), m_o_i2c_interface(MODE_SLAVE, static_cast<uint8_t>(0xE)) //, m_o_i2c_interface(I2C_FIRST, MODE_SLAVE, 0xE)
+{
+	using namespace std::placeholders;
+
+	OBDataListHelper::clone(obd_ii_diagnosis_data, this->dummy_obd_data);
 	//ThreadingHelper::set_default_stack_size(0x4000u);
 
-	this->thread_diagnosis_reader = new std_ex::thread(&OBDIICnCI2CDiagnosisDevice::thread_diagnosis_reader_main, this);
+	m_o_i2c_interface.begin(21,22,100000); // SDA pin 21, SCL pin 22, 100kHz frequency
+
+	//auto receive_event_handler = std::bind(&OBDIICnCI2CDiagnosisDevice::on_i2c_receive, this);
+
+	m_o_i2c_interface.onReceive(std::bind(&OBDIICnCI2CDiagnosisDevice::on_i2c_receive, this, _1, _2)); // register event
+	this->thread_diagnosis_reader = nullptr;
+
+	p_o_instance = this;
+	//this->thread_diagnosis_reader = new std_ex::thread(&OBDIICnCI2CDiagnosisDevice::thread_diagnosis_reader_main, this);
 }
 
 OBDIICnCI2CDiagnosisDevice::~OBDIICnCI2CDiagnosisDevice()
@@ -35,6 +76,7 @@ OBDIICnCI2CDiagnosisDevice::~OBDIICnCI2CDiagnosisDevice()
 		this->thread_diagnosis_reader->join();
 		delete(this->thread_diagnosis_reader);
 	}
+	p_o_instance = nullptr;
 }
 
 
@@ -141,16 +183,21 @@ void OBDIICnCI2CDiagnosisDevice::update_data()
 }
 #endif
 
-
-void OBDIICnCI2CDiagnosisDevice::process_message(uint8_t *buffer, size_t buffer_size)
+void OBDIICnCI2CDiagnosisDevice::on_i2c_receive(const uint8_t *cau8_buffer, int32_t i32_num_of_bytes)
 {
-	if (buffer_size == 0)
+	DEBUG_PRINTF("Data received! " + std_ex::to_string(cau8_buffer[0]));
+}
+
+
+void OBDIICnCI2CDiagnosisDevice::process_message(uint8_t *au8_buffer, uint32_t u32_buffer_size)
+{
+	if (u32_buffer_size == 0)
 	{
 		DEBUG_PRINTF("Received invalid message: length 0");
 		return;
 	}
 
-	const size_t payload_length = buffer_size - 1u;
+	const uint32_t payload_length = u32_buffer_size - 1u;
 
 	auto process_obd_data_message = [&]() -> int
 		{
@@ -162,7 +209,7 @@ void OBDIICnCI2CDiagnosisDevice::process_message(uint8_t *buffer, size_t buffer_
 				return -1;
 			}
 
-			uint8_t* buffer_ptr = buffer + 1;
+			uint8_t* buffer_ptr = au8_buffer + 1;
 
 			for (size_t i = 0; i != num_of_packets; ++i)
 			{
@@ -175,7 +222,7 @@ void OBDIICnCI2CDiagnosisDevice::process_message(uint8_t *buffer, size_t buffer_
 		};
 
 
-	switch(static_cast<I2C_HEADER_BYTE>(buffer[0]))
+	switch(static_cast<I2C_HEADER_BYTE>(au8_buffer[0]))
 	{
 	case HEADER_STARTUP:
 		DEBUG_PRINTF("Startup header received!");
@@ -187,7 +234,7 @@ void OBDIICnCI2CDiagnosisDevice::process_message(uint8_t *buffer, size_t buffer_
 		process_obd_data_message();
 		break;
 	default:
-		DEBUG_PRINTF("Invalid header received: " + std_ex::to_string(buffer[0]));
+		DEBUG_PRINTF("Invalid header received: " + std_ex::to_string(au8_buffer[0]));
 		break;
 
 	}
@@ -195,19 +242,28 @@ void OBDIICnCI2CDiagnosisDevice::process_message(uint8_t *buffer, size_t buffer_
 
 void OBDIICnCI2CDiagnosisDevice::thread_diagnosis_reader_main()
 {
+
+	//m_o_i2c_interface.
 	/* This thread does the reading of the OBD data */
 	uint8_t buffer[__OBD_II_I2C_BUFFER_SIZE] = { 0 };
+
 	while(true)
 	{
 		//uint32_t uxHighWaterMark = uxTaskGetStackHighWaterMark( NULL );
 		//DEBUG_PRINTF("Current stack is: " + helper::to_string(uxHighWaterMark) + " bytes.");
 		size_t buffer_size = __OBD_II_I2C_BUFFER_SIZE;
 
-		if (0 == m_o_i2c_interface.slave_read(buffer, buffer_size, std::chrono::milliseconds(10)))
-		{
+		  while(Wire.available())    // slave may send less than requested
+		  {
+		    char c = Wire.read();    // receive a byte as character
+		    //Serial.print(c);         // print the character
+		  }
+
+		//if (0 == m_o_i2c_interface.(buffer, buffer_size, std::chrono::milliseconds(10)))
+		//{
 			// Successfully received data
 
-		}
+		//}
 
 		//this->update_data();
 		//std_ex::sleep_for(std::chrono::milliseconds(100));

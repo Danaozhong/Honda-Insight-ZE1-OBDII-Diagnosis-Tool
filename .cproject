@@ -21,10 +21,11 @@
 							<builder arguments="-f ${ProjDirPath}/Makefile" command="mingw32-make.exe" id="cdt.managedbuild.builder.gnu.cross.1876460142" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.1056286588" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
 								<option id="gnu.both.asm.option.include.paths.125358549" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;C:\Espressif\ESP32_RTOS_SDK\include\esp32\&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Espressif\ESP32_RTOS_SDK\extra_include\&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Espressif\ESP32_RTOS_SDK\third_party\include\&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${BOOST_ROOT}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\libraries\Wire\src&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1833681201" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -39,6 +40,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\driver&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\esp32&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\freertos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\libraries\Wire\src&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.501261625" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -52,6 +54,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\driver&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\esp32&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\tools\sdk\include\freertos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Clemens\Documents\Arduino\hardware\espressif\esp32\libraries\Wire\src&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1700912488" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>

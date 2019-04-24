@@ -28,6 +28,18 @@ enum exception_type
 
 };
 
+#if 0
+class SerialLogger
+{
+public:
+	SerialLogger();
+
+	~SerialLogger();
+
+	void print(const std::string &str);
+};
+#endif
+
 namespace std_ex
 {
     template < typename T > std::string to_string( const T& n )

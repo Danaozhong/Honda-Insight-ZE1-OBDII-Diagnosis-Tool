@@ -1,6 +1,7 @@
 
-#include "app/diagnosis_reader_application.hpp"
-#include "driver/obdiicnc/dummy_diagnosis_device.hpp"
+#include "diagnosis_reader_application.hpp"
+#include "dummy_diagnosis_device.hpp"
+#include "obd_ii_cnc_uart_diagnosis_device.hpp"
 #include "trace.h"
 
 
@@ -13,13 +14,24 @@ namespace Application
 	DiagnosisReaderApplication::DiagnosisReaderApplication()
 	:diagnosis_reader(nullptr), ble_server(nullptr)
 	{
-		/* Create a OBD II reader (currently, a dummy OBD II interface is used */
-		this->obd_diagnosis_device = std::make_shared<DummyDiagnosisDevice>();
+		/* Create a OBD II reader (currently, a dummy OBD II interface is used) */
+
+		uart_config_t st_uart_configuration = {
+		    .baud_rate = 38400,
+		    .data_bits = UART_DATA_8_BITS,
+		    .parity = UART_PARITY_DISABLE,
+		    .stop_bits = UART_STOP_BITS_1,
+		    .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+		    .rx_flow_ctrl_thresh = 0,
+		};
+
+		this->obd_diagnosis_device = std::make_shared<OBDIICnCUARTDiagnosisDevice>(1, 22, 23, st_uart_configuration);
 
 		if (nullptr == this->obd_diagnosis_device)
 		{
 			FATAL("Creation of the OBD Diagnosis device failed!");
 		}
+
 
 		this->diagnosis_reader = std::shared_ptr<CommunicationManager>(new CommunicationManager(obd_diagnosis_device, obd_ii_diagnosis_data));
 
@@ -29,6 +41,7 @@ namespace Application
 		}
 
 		diagnosis_reader->connect();
+
 
 		/* Start the bluetooth BLE interface */
 		DEBUG_PRINTF("Starting Bluetooth!");
@@ -48,6 +61,14 @@ namespace Application
 
 		thread_repository.start_all_threads();
 		DEBUG_PRINTF("OBD Data Acquisition threads started!");
+
+
+		// TODO ugly patch begin - manually set the OBD II items that are of interest
+		std::vector<unsigned char> au8_elements_of_interest = {0x0A, 0x41, 0x0D, 0x11, 0x0E, 0x4D, 0x0C, 0x51 };
+
+		this->diagnosis_reader->set_elements_of_interests(au8_elements_of_interest);
+		// TODO ugly patch end
+
 	}
 
 	DiagnosisReaderApplication::~DiagnosisReaderApplication()

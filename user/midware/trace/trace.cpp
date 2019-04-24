@@ -11,11 +11,12 @@
 #include <cstdarg>
 #include <string>
 #include <mutex>
-
 /* Own header */
 #include "midware/trace/trace.h"
 
 std::mutex mutex_serial_if;
+
+
 
 void print_serial(const char character)
 {

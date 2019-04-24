@@ -119,6 +119,7 @@ namespace OBDataListHelper
 {
 	bool is_obd_data_list_valid(const OBDDataList &obd_data);
 	void clone(const OBDDataList &src, OBDDataList &dst);
+	OBDDataList::iterator get_element_by_identifier(OBDDataList &src, uint8_t identifier);
 
 }
 

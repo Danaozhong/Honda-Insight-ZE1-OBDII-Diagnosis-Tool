@@ -29,6 +29,7 @@
 
 Application::DiagnosisReaderApplication* application;
 
+
 void onButton(){
 	String out = "";
 	out += "TestBLEInterface";

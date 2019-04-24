@@ -15,13 +15,6 @@
 /* Own header files */
 #include "cyclic_thread.hpp"
 
-namespace std_ex
-{
-	void sleep_for(std::chrono::milliseconds milliseconds)
-	{
-		 vTaskDelay(milliseconds.count() / portTICK_PERIOD_MS);
-	}
-}
 
 
 int CyclicThread::start()

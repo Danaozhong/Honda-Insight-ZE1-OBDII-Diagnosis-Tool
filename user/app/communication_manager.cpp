@@ -111,7 +111,6 @@ namespace Application
 			if (std::find(this->ait_changed_obd_data.begin(), this->ait_changed_obd_data.end(), *itr) == this->ait_changed_obd_data.end())
 			{
 				this->ait_changed_obd_data.push_back(*itr);
-
 			}
 		}
 	}

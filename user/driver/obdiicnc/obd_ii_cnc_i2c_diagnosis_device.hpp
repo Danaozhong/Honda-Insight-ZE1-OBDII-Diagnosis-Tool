@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 #include "thread.hpp"
+#include <Wire.h>
 
 /* Other modules */
 #include "i2c_interface.hpp"
@@ -45,6 +46,7 @@ public:
 
 	virtual int clear_error_code(const OBDErrorCode& code);
 
+	void process_message(uint8_t *buffer, uint32_t u32_buffer_size);
 private:
 	/** Flag to indicate if the diagnosis device is connected */
 	bool connected;
@@ -59,9 +61,14 @@ private:
 
 	std_ex::thread* thread_diagnosis_reader;
 
-	void process_message(uint8_t *buffer, size_t buffer_size);
+
 
 	void thread_diagnosis_reader_main();
+
+
+	void on_i2c_receive(const uint8_t *cau8_buffer, int32_t i32_num_of_bytes);
+
+	//void process_message(uint8_t *au8_buffer, uint32_t u32_buffer_size);
 
 	enum I2C_HEADER_BYTE {
 		HEADER_STARTUP = 0x10,

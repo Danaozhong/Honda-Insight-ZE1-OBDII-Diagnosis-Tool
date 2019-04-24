@@ -57,10 +57,12 @@ void OBDDataBLETransmissionThread::run()
 	if (this->ble_obd_server != nullptr && this->ble_obd_server->get_diagnosis_reader() != nullptr)
 	{
 		auto changed_items = this->ble_obd_server->get_diagnosis_reader()->get_changed_obd_data();
+#if 0 //TODO remove
 		if(this->ble_obd_server->get_obd_transmission_mode() == TRANSMISSION_MODE_ONLY_SELECTED_DATA_FAST)
 		{
 			changed_items = this->ble_obd_server->get_diagnosis_reader()->get_changed_obd_data_of_interest();
 		}
+#endif // TODO remove
 
 		this->ble_obd_server->get_diagnosis_reader()->clear_changed_obd_data();
 
@@ -76,7 +78,7 @@ void OBDDataBLETransmissionThread::run()
 		/* Calculate the buffer size */
 		uint16_t u16_tx_message_size = 6u;
 
-		DEBUG_PRINTF("%i", changed_items.size());
+		DEBUG_PRINTF("Changed item size is: %i", changed_items.size());
 		for (auto itr : changed_items)
 		{
 			u16_tx_message_size += 1;
@@ -282,7 +284,7 @@ int BLEOBDDataServer::initialize_client_connection()
 
 	/* Request encryption */
 	std::vector<unsigned char> encryption_key;
-	if (this->client_request_encryption_key(std::chrono::seconds(2), encryption_key) != 0)
+	if (this->client_request_encryption_key(std::chrono::seconds(10), encryption_key) != 0)
 	{
 		/* Todo abort connection and wait for new connection. */
 		DEBUG_PRINTF("Request of encryption key failed!");
@@ -358,7 +360,7 @@ void BLEOBDDataServer::server_process_received_command(const BLETransmitBuffer &
 		{
 			i32_ret_val = 0;
 			DEBUG_PRINTF("Set elements of interest!");
-			this->diagnosis_reader->set_elements_of_interests(*value);
+			// TODO Fix this->diagnosis_reader->set_elements_of_interests(*value);
 			std::vector<unsigned char> obd_data_of_interest;
 		}
 	}
